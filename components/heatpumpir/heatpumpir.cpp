@@ -97,6 +97,7 @@ void HeatpumpIRClimate::setup() {
 }
 
 void HeatpumpIRClimate::transmit_state() {
+  ESP_LOGD(TAG, "transmit_state() called");
   uint8_t power_mode_cmd;
   uint8_t operating_mode_cmd;
   uint8_t temperature_cmd;
@@ -204,9 +205,13 @@ void HeatpumpIRClimate::transmit_state() {
 
   temperature_cmd = (uint8_t) clamp(this->target_temperature, this->min_temperature_, this->max_temperature_);
 
+  ESP_LOGD(TAG, "Sending IR: power=%d, mode=%d, fan=%d, temp=%d, swingV=%d, swingH=%d",
+           power_mode_cmd, operating_mode_cmd, fan_speed_cmd, temperature_cmd, swing_v_cmd, swing_h_cmd);
+
   IRSenderESPHome esp_sender(this->transmitter_);
   heatpump_ir_->send(esp_sender, power_mode_cmd, operating_mode_cmd, fan_speed_cmd, temperature_cmd, swing_v_cmd,
                      swing_h_cmd);
+  ESP_LOGD(TAG, "IR send completed");
 }
 
 }  // namespace heatpumpir
